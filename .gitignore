@@ -1,5 +1,4 @@
-/.idea/*
-/images/*
-/colours/__pycache__
-/colours/.idea
+.idea/*
+colours/images/*
+colours/__pycache__
 

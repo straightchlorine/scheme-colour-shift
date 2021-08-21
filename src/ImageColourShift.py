@@ -8,7 +8,13 @@ def cli():
         if input == 'exit' or input == 'quit':
             break
         variables = parameter_scan(input)
-        colour_shift(variables[-1][1], variables[-2][1], variables[-3][1], variables[-4][1])
+        colour_shift(
+                variables[-1][1],   # path
+                variables[-2][1],   # replacement colour
+                variables[-3][1],   # black threshold
+                variables[-4][1],   # white threshold
+                variables[-5][1]    # presision
+                )
         break
 
 
@@ -18,10 +24,11 @@ def user_input():
 
 
 def help_prompt():
-    print("shift [-p] [-wt] [-bt] [[-i] or [-g]]\n\n" +
+    print("shift [-p] [-wt] [-bt] [-c]\n\n" +
           "     -p          determines the tolerance of colours will be considered as background\n" +
           "     -wt         determines how close to white a colour must be in order to be considered white\n" +
           "     -bt         determines how close to black a colour must be in order to be considered black\n" +
+          "     -c          name of the colour you wish to replace remaining colours with\n" +
           "     exit        exit the program")
 
 
@@ -36,6 +43,7 @@ def parameter_scan(command):
         p_val = 50
         wt_val = 240
         bt_val = 30
+        colour = 'black'
 
         val = []
         for index, parameter in enumerate(parameters):
@@ -49,9 +57,11 @@ def parameter_scan(command):
             if parameter == '-wt':
                 wt_val = parameters[index + 1]
 
-            bt_val = 20
             if parameter == '-bt':
                 bt_val = parameters[index + 1]
+
+            if parameter == '-c':
+                colour = parameters[index + 1]
 
         precision = (0, p_val)
         val.append(precision)
@@ -62,7 +72,10 @@ def parameter_scan(command):
         black_threshold = (2, bt_val)
         val.append(black_threshold)
 
-        dir_param = (3, directory)
+        final_colour = (3, colour)
+        val.append(final_colour)
+
+        dir_param = (4, directory)
         val.append(dir_param)
 
         return val

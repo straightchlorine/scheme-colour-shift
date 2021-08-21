@@ -3,7 +3,7 @@ from BackgroundColours import backgroundcolours
 import os
 
 
-def colour_shift(path, precision, wt, bt):
+def colour_shift(path, r_colour, bt, wt, precision):
     img = Image.open(path)
     img = img.convert("RGB")
 
@@ -15,7 +15,7 @@ def colour_shift(path, precision, wt, bt):
 
     white = ImageColor.getrgb("white")
     black = ImageColor.getrgb("black")
-    magenta = ImageColor.getrgb("magenta")
+    replacement = ImageColor.getrgb(r_colour)
 
     # substituting the background colours to white
     for x in range(img.size[0]):
@@ -31,7 +31,7 @@ def colour_shift(path, precision, wt, bt):
                     pixels[x, y] = white
                     continue
                 else:
-                    pixels[x, y] = magenta
+                    pixels[x, y] = replacement
 
     pure_path = os.path.dirname(path)  # extracts only the directory
     split_path = os.path.splitext(path)[0]  # breaks apart the root and extension

@@ -1,4 +1,2 @@
 .idea/*
-colours/images/*
-colours/__pycache__
-
+./src/__pycache__/*

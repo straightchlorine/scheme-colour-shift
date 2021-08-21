@@ -8,7 +8,7 @@ def cli():
         if input == 'exit' or input == 'quit':
             break
         variables = parameter_scan(input)
-
+        colour_shift(variables[-1][1], variables[-2][1], variables[-3][1], variables[-4][1])
         break
 
 
@@ -33,29 +33,34 @@ def parameter_scan(command):
         directory = parameters[-1]
         parameters.pop(-1)
 
+        p_val = 50
+        wt_val = 240
+        bt_val = 30
+
         val = []
         for index, parameter in enumerate(parameters):
             parameter = parameter.rstrip()
             if parameter.isdecimal():
                 continue
 
-            p_val = 50
             if parameter == '-p':
                 p_val = parameters[index + 1]
-            precision = (0, p_val)
-            val.append(precision)
 
-            wt_val = 240
             if parameter == '-wt':
                 wt_val = parameters[index + 1]
-            white_threshold = (1, wt_val)
-            val.append(white_threshold)
 
             bt_val = 20
             if parameter == '-bt':
                 bt_val = parameters[index + 1]
-            black_threshold = (2, bt_val)
-            val.append(black_threshold)
+
+        precision = (0, p_val)
+        val.append(precision)
+
+        white_threshold = (1, wt_val)
+        val.append(white_threshold)
+
+        black_threshold = (2, bt_val)
+        val.append(black_threshold)
 
         dir_param = (3, directory)
         val.append(dir_param)

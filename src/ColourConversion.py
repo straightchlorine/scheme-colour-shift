@@ -3,12 +3,12 @@ from BackgroundColours import backgroundcolours
 import os
 
 
-def colour_shift(path):
+def colour_shift(path, precision, wt, bt):
     img = Image.open(path)
     img = img.convert("RGB")
 
     # compiling a list of potential background colours
-    background = backgroundcolours(img)
+    background = backgroundcolours(img, precision)
 
     # creating an array of pixels
     pixels = img.load()
@@ -24,10 +24,10 @@ def colour_shift(path):
                 if pixels[x, y] == colour:
                     pixels[x, y] = white
                     continue
-                #if black_supposedly(pixels[x, y]):
-                #    pixels[x, y] = black
-                #    continue
-                if white_supposedly(pixels[x, y]):
+                if black_supposedly(pixels[x, y], bt):
+                    pixels[x, y] = black
+                    continue
+                if white_supposedly(pixels[x, y], wt):
                     pixels[x, y] = white
                     continue
                 else:
@@ -45,19 +45,19 @@ def colour_shift(path):
     print("Completed. File saved as " + processed_file)
 
 
-def black_supposedly(colour):
-    if colour[0] < 100:
-        if colour[1] < 100:
-            if colour[2] < 100:
+def black_supposedly(colour, bt):
+    if colour[0] < bt:
+        if colour[1] < bt:
+            if colour[2] < bt:
                 return True
     else:
         return False
 
 
-def white_supposedly(colour):
-    if colour[0] > 150:
-        if colour[1] > 150:
-            if colour[2] > 150:
+def white_supposedly(colour, wt):
+    if colour[0] > wt:
+        if colour[1] > wt:
+            if colour[2] > wt:
                 return True
     else:
         return False

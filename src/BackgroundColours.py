@@ -8,9 +8,10 @@ def backgroundcolours(image, precision):
         image = image.convert('RGB')
 
     # increasing the threshold of getcolors() method
-    colors = image.getcolors(image.size[0] * image.size[1]) 
+    colors = image.getcolors(image.size[0] * image.size[1])
     colors.sort(key=lambda tup: tup[0], reverse=True)
 
+    # background colours
     selected = []
 
     for f, c in colors:  # the most abundant colour assigned to the list
@@ -31,9 +32,11 @@ def similarity(colour, c_colour, precision):
     is one colour from another.
     """
 
-    if abs(colour[0] - c_colour[0]) <= precision:           # red
-        if abs(colour[1] - c_colour[1]) <= precision:       # green
-            if abs(colour[2] - c_colour[2]) <= precision:   # blue
+    if abs(colour[0] - c_colour[0]) <= int(precision):           # red
+        if abs(colour[1] - c_colour[1]) <= int(precision):       # green
+            if abs(colour[2] - c_colour[2]) <= int(precision):   # blue
                 return True
     else:
         return False
+
+

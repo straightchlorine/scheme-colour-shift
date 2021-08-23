@@ -4,10 +4,13 @@ from DirectoryTraversal import queue
 
 def cli():
     """
+    returns void
+
     Main function of the application, provides a simple user interface.
     """
     input = user_input()
 
+    # main loop
     while True:
 
         if input == 'exit' or input == 'quit':
@@ -21,14 +24,14 @@ def cli():
             parameters = parameter_scan(input)
 
             colour_shift(
-                    parameters[-1][1],   # path
-                    parameters[-2][1],   # background replacement colour
-                    parameters[-3][1],   # foreground replacement colour
-                    parameters[-4][1],   # mark colour (neither foreground or background) 
-                    parameters[-5][1],   # black threshold 
-                    parameters[-6][1],   # white threshold
-                    parameters[-7][1]    # precision
-                    )
+                parameters[0][1],   # precision
+                parameters[1][1],   # white threshold
+                parameters[2][1],   # blach threshold
+                parameters[3][1],   # mark colour
+                parameters[4][1],   # foreground
+                parameters[5][1],   # background
+                parameters[6][1])   # directory
+
         else:
             print("Invalid command.")
 
@@ -44,25 +47,29 @@ def user_input():
 
 
 def help_prompt():
-    print("shift [-p] [-wt] [-bt] [-mkc] [-fgc] [-bgc]\n\n" +
+    print("shift [-p] [-wt] [-bt] [-mk] [-fg] [-bg]\n\n" +
           "     -p          determines the range of colours considered as background\n" +
           "     -wt         determines how close to white a colour must be in order to be considered white\n" +
           "     -bt         determines how close to black a colour must be in order to be considered black\n" +
-          "     -mkc        colour, which marks colours not considered either a background or foreground ones\n" +
-          "     -fgc        determines, which colour will replace foreground colours\n" +
-          "     -bgc        determines, which colour will replace background colours\n" +
+          "     -mk         marks colours not considered either a background or foreground ones\n" +
+          "     -fg         determines which colour will replace foreground colours\n" +
+          "     -bg         determines which colour will replace background colours\n" +
           "     exit        exit the program\n")
 
 
 def parameter_scan(command):
     """
-    Function extracts the values of each parameter of the command,
-    and assigns them to the single list as tuples, in predetermined
-    order.
+    returns a list of parameters, extracted from the command
+
+    The list has a predetermined order, for the purpose of receiving
+    arguments in various configurations.
     """
+
+    # removing the prefix
     parameters = command.split(' ')
     parameters.pop(0)
 
+    # obtaining the directory and removing it from the list
     directory = parameters[-1]
     parameters.pop(-1)
 
@@ -79,51 +86,34 @@ def parameter_scan(command):
     val = []
     for index, parameter in enumerate(parameters):
 
-        parameter = parameter.rstrip()
-
-        if parameter.isdecimal():
-            continue
-
         if parameter == '-p':
             p_val = parameters[index + 1]
-
         if parameter == '-wt':
             wt_val = parameters[index + 1]
-
         if parameter == '-bt':
             bt_val = parameters[index + 1]
-
-        if parameter == '-mkc':
+        if parameter == '-mk':
             mk_colour = parameters[index + 1]
-
-        if parameter == '-bgc':
+        if parameter == '-bg':
             bg_colour = parameters[index + 1]
-
-        if parameter == '-fgc':
+        if parameter == '-fg':
             fg_colour = parameters[index + 1]
 
-    precision = (0, p_val)
-    val.append(precision)
+    # grouping parameters
+    val.append(p_val)
+    val.append(wt_val)
+    val.append(bt_val)
+    val.append(mk_colour)
+    val.append(bg_colour)
+    val.append(fg_colour)
+    val.append(directory)
 
-    white_threshold = (1, wt_val)
-    val.append(white_threshold)
+    # assigning each parameter an index
+    params = []
+    for index, param_value in enumerate(val):
+        params.append((index, param_value))
 
-    black_threshold = (2, bt_val)
-    val.append(black_threshold)
-
-    mark_colour = (3, mk_colour)
-    val.append(mark_colour)
-
-    foreground_colour = (4, fg_colour)
-    val.append(foreground_colour)
-
-    background_colour = (5, bg_colour)
-    val.append(background_colour)
-
-    dir_param = (6, directory)
-    val.append(dir_param)
-
-    return val
+    return params
 
 
 cli()

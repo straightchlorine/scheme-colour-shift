@@ -1,24 +1,24 @@
 def backgroundcolours(image, precision):
     """
-    Finds most common colours and their hues in order to
-    determine the background colours of the image.
-    """
+    returns a list of background colours.
 
-    if image.getpalette():              # procuring the list of colours
+    Background colours are selected based on the similiarity to the
+    most abundant colour, controlled by precision variable.
+    """
+    if image.getpalette():
         image = image.convert('RGB')
 
     # increasing the threshold of getcolors() method
     colors = image.getcolors(image.size[0] * image.size[1])
     colors.sort(key=lambda tup: tup[0], reverse=True)
 
-    # background colours
     selected = []
 
     for f, c in colors:  # the most abundant colour assigned to the list
         selected.append(c)
         break
 
-    # verifies if colour is another hue of the background colour
+    # verifies if colour is an another hue of the background colour
     for index, (freq, colour) in enumerate(colors[1:]):
         if similarity(selected[0], colour, precision):
             selected.append(colour)
@@ -28,8 +28,9 @@ def backgroundcolours(image, precision):
 
 def similarity(colour, c_colour, precision):
     """
-    Relies on precision variable and determines how different
-    is one colour from another.
+    returns true, when a given colour meets restriction (precision)
+
+    Verifies each colour and checks if the given colour is similar or not.
     """
 
     if abs(colour[0] - c_colour[0]) <= int(precision):           # red

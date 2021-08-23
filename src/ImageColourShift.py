@@ -1,5 +1,5 @@
 from ColourConversion import colour_shift
-from DirectoryTraversal import queue
+from ParameterValidation import precision_validation, wt_validation, bt_validation, colour_validation, path_validation
 
 
 def cli():
@@ -8,34 +8,46 @@ def cli():
 
     Main function of the application, provides a simple user interface.
     """
-    input = user_input()
+    u_input = user_input()
 
     # main loop
     while True:
 
-        if input == 'exit' or input == 'quit':
+        if u_input == 'exit' or u_input == 'quit':
             print("Program terminated.")
             break
 
-        elif input == 'help':
+        elif u_input == 'help':
             help_prompt()
 
-        elif input.find('shift') != -1:
-            parameters = parameter_scan(input)
+        elif u_input.find('shift') != -1:
+            parameters = parameter_scan(u_input)
+
+            if (precision_validation(parameters[0][1]) and
+                    wt_validation(parameters[1][1]) and
+                    bt_validation(parameters[2][1]) and
+                    colour_validation(parameters[3][1]) and
+                    colour_validation(parameters[4][1]) and
+                    colour_validation(parameters[5][1]) and
+                    path_validation(parameters[6][1])):
+                print('Parameters loaded correctly.')
+            else:
+                u_input = ''
+                continue
 
             colour_shift(
-                parameters[0][1],   # precision
-                parameters[1][1],   # white threshold
-                parameters[2][1],   # blach threshold
-                parameters[3][1],   # mark colour
-                parameters[4][1],   # foreground
-                parameters[5][1],   # background
-                parameters[6][1])   # directory
+                parameters[0][1],  # precision
+                parameters[1][1],  # white threshold
+                parameters[2][1],  # black threshold
+                parameters[3][1],  # mark colour
+                parameters[4][1],  # foreground
+                parameters[5][1],  # background
+                parameters[6][1])  # directory
 
         else:
-            print("Invalid command.")
+            print('!>> Invalid command')
 
-        input = user_input()
+        u_input = user_input()
 
 
 def user_input():

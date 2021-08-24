@@ -1,4 +1,7 @@
 class BackgroundData:
+    """
+    class responsible for compiling a list of background colours
+    """
     # attributes
     precision = None
 

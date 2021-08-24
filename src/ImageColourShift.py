@@ -1,5 +1,5 @@
-from ColourConversion import colour_shift
-from ParameterValidation import precision_validation, wt_validation, bt_validation, colour_validation, path_validation
+from ColourConversion import Conversion
+from ParameterValidation import Validation
 
 
 def cli():
@@ -14,7 +14,7 @@ def cli():
     while True:
 
         if u_input == 'exit' or u_input == 'quit':
-            print("Program terminated.")
+            print("#>>Program terminated.")
             break
 
         elif u_input == 'help':
@@ -23,26 +23,21 @@ def cli():
         elif u_input.find('shift') != -1:
             parameters = parameter_scan(u_input)
 
-            if (precision_validation(parameters[0][1]) and
-                    wt_validation(parameters[1][1]) and
-                    bt_validation(parameters[2][1]) and
-                    colour_validation(parameters[3][1]) and
-                    colour_validation(parameters[4][1]) and
-                    colour_validation(parameters[5][1]) and
-                    path_validation(parameters[6][1])):
-                print('Parameters loaded correctly.')
-            else:
-                u_input = ''
+            valid = Validation(parameters)
+            if not valid.validate():
                 continue
 
-            colour_shift(
-                parameters[0][1],  # precision
-                parameters[1][1],  # white threshold
-                parameters[2][1],  # black threshold
+            shift = Conversion(
+                int(parameters[0][1]),  # precision
+                int(parameters[1][1]),  # white threshold
+                int(parameters[2][1]),  # black threshold
                 parameters[3][1],  # mark colour
                 parameters[4][1],  # foreground
                 parameters[5][1],  # background
-                parameters[6][1])  # directory
+                parameters[6][1]   # directory
+            )
+
+            shift.colour_shift()
 
         else:
             print('!>> Invalid command')

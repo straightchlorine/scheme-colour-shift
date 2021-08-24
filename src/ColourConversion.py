@@ -1,89 +1,108 @@
 from PIL import Image, ImageColor
-from BackgroundColours import backgroundcolours
+from BackgroundColours import BackgroundData
 import os
 
 
-def colour_shift(precision, wt, bt, mark_colour, bg_replacement, fg_replacement, path):
-    """
-    returns void
+class Conversion:
+    p_param = None
+    wt_param = None
+    bt_param = None
+    mk_c_param = None
+    bg_c_param = None
+    fg_c_param = None
+    path_param = None
 
-    Processes the image, and changes the colour of each pixel accordingly.
-    """
-    img = Image.open(path)
-    img = img.convert("RGB")
+    def __init__(self, precision, white_threshold, black_threshold,
+                 mark_colour, background_colour, foreground_colour, path):
 
-    # compiling a list of potential background colours
-    background = backgroundcolours(img, precision)
-    pixels = img.load()
+        precision = int(precision)
+        white_threshold = int(white_threshold)
+        black_threshold = int(black_threshold)
 
-    print("Process started...")
+        self.p_param = precision
+        self.wt_param = white_threshold
+        self.bt_param = black_threshold
+        self.mk_c_param = mark_colour
+        self.bg_c_param = background_colour
+        self.fg_c_param = foreground_colour
+        self.path_param = path
 
-    # colour substitution
-    for x in range(img.size[0]):
-        for y in range(img.size[1]):
-            for colour in background:
+    def colour_shift(self):
+        """
+        returns void
 
-                # replacing background colours
-                if pixels[x, y] == colour:
-                    pixels[x, y] = ImageColor.getrgb(bg_replacement)
-                    break
+        Processes the image, and changes the colour of each pixel accordingly.
+        """
+        # opening the image
+        img = Image.open(self.path_param)
+        img = img.convert("RGB")
 
-                # replacing dark pixels to true black colour
-                elif black_supposedly(pixels[x, y], bt):
-                    pixels[x, y] = ImageColor.getrgb(fg_replacement)
-                    break
+        # compiling a list of potential background colours
+        bg = BackgroundData(self.p_param)
+        background = bg.background_colours(img)
+        pixels = img.load()
 
-                # replacing light pixels to true white colour
-                elif white_supposedly(pixels[x, y], wt):
-                    pixels[x, y] = ImageColor.getrgb(bg_replacement)
-                    break
+        print("Process started...")
 
-                # if some pixels did not meet any requirement
-                else:
-                    pixels[x, y] = ImageColor.getrgb(mark_colour)
-                    break
+        # colour substitution
+        for x in range(img.size[0]):
+            for y in range(img.size[1]):
+                for colour in background:
 
+                    # replacing background colours
+                    if pixels[x, y] == colour:
+                        pixels[x, y] = ImageColor.getrgb(self.bg_c_param)
+                        break
 
-    dir   = os.path.dirname(path)       # directory
-    raw   = os.path.splitext(path)[0]   # only dir + filename 
-    ext   = os.path.splitext(path)[1]   # extension
-    fname = raw.split('/')[-1]          # file name
+                    # replacing dark pixels to true black colour
+                    elif self.black_supposedly(pixels[x, y]):
+                        pixels[x, y] = ImageColor.getrgb(self.fg_c_param)
+                        break
 
-    p_name = fname + '_processed' + ext     # processed name
-    f_path = dir + '/' + p_name             # final path
+                    # replacing light pixels to true white colour
+                    elif self.white_supposedly(pixels[x, y]):
+                        pixels[x, y] = ImageColor.getrgb(self.bg_c_param)
+                        break
 
-    img.save(f_path)
+                    # if some pixels did not meet any requirement
+                    else:
+                        pixels[x, y] = ImageColor.getrgb(self.mk_c_param)
+                        break
 
-    print("Completed. File saved as " + p_name + " in " + dir)
+        p_dir = os.path.dirname(self.path_param)  # directory
+        raw = os.path.splitext(self.path_param)[0]  # only dir + filename
+        ext = os.path.splitext(self.path_param)[1]  # extension
+        f_name = raw.split('/')[-1]  # file name
 
-    img.close()
+        p_name = f_name + '_processed' + ext  # processed name
+        f_path = p_dir + '/' + p_name  # final path
 
+        img.save(f_path)
+        img.close()
+        print("Completed. File saved as " + p_name + " in " + p_dir)
 
-def black_supposedly(colour, bt):
-    """
-    returns True, if the colour is dark enough.
+    def black_supposedly(self, colour):
+        """
+        returns True, if the colour is dark enough.
 
-    If every parameter(R, G and B) is less than or equal to the black threshold
-    """
-    if colour[0] <= int(bt):
-        if colour[1] <= int(bt):
-            if colour[2] <= int(bt):
-                return True
-    else:
-        return False
+        If every parameter(R, G and B) is less than or equal to the black threshold
+        """
+        if colour[0] <= self.bt_param:
+            if colour[1] <= self.bt_param:
+                if colour[2] <= self.bt_param:
+                    return True
+        else:
+            return False
 
+    def white_supposedly(self, colour):
+        """
+        returns True, if the colour is light enough.
 
-def white_supposedly(colour, wt):
-    """
-    returns True, if the colour is light enough.
-
-    If every parameter(R, G and B) is more than or equal to the black threshold
-    """
-    if colour[0] >= int(wt):
-        if colour[1] >= int(wt):
-            if colour[2] >= int(wt):
-                return True
-    else:
-        return False
-
-
+        If every parameter(R, G and B) is more than or equal to the black threshold
+        """
+        if colour[0] >= self.wt_param:
+            if colour[1] >= self.wt_param:
+                if colour[2] >= self.wt_param:
+                    return True
+        else:
+            return False

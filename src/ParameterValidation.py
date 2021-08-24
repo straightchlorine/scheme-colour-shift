@@ -2,53 +2,84 @@ import os
 from PIL import ImageColor
 
 
-def precision_validation(precision):
-    if int(precision) < 0:
-        print('!>> precision value cannot be negative')
-        return False
-    else:
-        return True
+class Validation:
+    p_param = None
+    wt_param = None
+    bt_param = None
+    mk_c_param = None
+    bg_c_param = None
+    fg_c_param = None
+    path_param = None
+    error_msg = None
 
+    def __init__(self, parameters):
+        self.p_param = parameters[0][1]
+        self.wt_param = parameters[1][1]
+        self.bt_param = parameters[2][1]
+        self.mk_c_param = parameters[3][1]
+        self.bg_c_param = parameters[4][1]
+        self.fg_c_param = parameters[5][1]
+        self.path_param = parameters[6][1]
 
-def wt_validation(wt):
-    if int(wt) > 255:
-        print('!>> white threshold value exceeds 255')
-        return False
-    elif int(wt) < 0:
-        print('!>> white threshold value cannot be negative')
-        return False
-    else:
-        return True
+    def validate(self):
+        if (self.precision_validation() and
+                self.wt_param_validation() and
+                self.bt_validation() and
+                self.colour_validation(self.mk_c_param) and
+                self.colour_validation(self.bg_c_param) and
+                self.colour_validation(self.fg_c_param) and
+                self.path_validation()):
 
+            print(self.error_msg)
+            return True
 
-def bt_validation(bt):
-    if int(bt) > 255:
-        print('!>> black threshold value exceeds 255')
-        return False
-    elif int(bt) < 0:
-        print('!>> black threshold value cannot be negative')
-        return False
-    else:
-        return True
+        else:
+            return False
 
-
-def colour_validation(colour):
-    try:
-        buffer = ImageColor.getrgb(colour)
-    except ValueError:
-        print('!>> invalid colour ' + colour)
-        return False
-    return True;
-
-
-def path_validation(path):
-    if os.path.exists(path):
-        if os.path.isdir(path):
-            print('!>> specified path is a directory')
+    def precision_validation(self):
+        if self.p_param < 0:
+            self.error_msg = '!>> precision value cannot be negative'
             return False
         else:
             return True
-    else:
-        print('!>> specified path does not exist')
+
+    def wt_param_validation(self):
+        if self.wt_param > 255:
+            self.error_msg = '!>> white threshold value exceeds 255'
+            return False
+        elif self.wt_param < 0:
+            self.error_msg = '!>> white threshold value cannot be negative'
+            return False
+        else:
+            return True
+
+    def bt_validation(self):
+        if self.bt_param > 255:
+            self.error_msg = '!>> black threshold value exceeds 255'
+            return False
+        elif self.bt_param < 0:
+            self.error_msg = '!>> black threshold value cannot be negative'
+            return False
+        else:
+            return True
+
+    def colour_validation(self, colour):
+        try:
+            buffer = ImageColor.getrgb(colour)
+        except ValueError:
+            self.error_msg = '!>> invalid colour ' + colour
+            return False
         return True
 
+    def path_validation(self):
+        self.path_param.replace('~', '/home/goldberg')
+
+        if os.path.exists(self.path_param):
+            if os.path.isdir(self.path_param):
+                self.error_msg = '!>> specified path is a directory'
+                return False
+            else:
+                return True
+        else:
+            self.error_msg = '!>> specified path does not exist'
+            return True

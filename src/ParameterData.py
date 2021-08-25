@@ -27,12 +27,12 @@ class ParameterData:
 
     def validate(self):
         if (self.val.precision_validation() and
-            self.val.wt_param_validation() and
-            self.val.bt_validation() and
-            self.val.colour_validation(self.mk_c_param) and
-            self.val.colour_validation(self.bg_c_param) and
-            self.val.colour_validation(self.fg_c_param) and
-            self.val.path_validation()):
+                self.val.wt_param_validation() and
+                self.val.bt_validation() and
+                self.val.colour_validation(self.mk_c_param) and
+                self.val.colour_validation(self.bg_c_param) and
+                self.val.colour_validation(self.fg_c_param) and
+                self.val.path_validation()):
             return True
         else:
             print(self.val.error_msg)

@@ -1,6 +1,7 @@
 import os
 from PIL import ImageColor
 
+
 class Validation:
     """
     Class responsible for verifying if given parameters are indeed valid.
@@ -40,7 +41,7 @@ class Validation:
 
     def colour_validation(self, colour):
         try:
-            buffer = ImageColor.getrgb(colour)
+            ImageColor.getrgb(colour)
         except ValueError:
             self.error_msg = '!>> invalid colour ' + colour
             return False

@@ -2,7 +2,7 @@ from ColourConversion import Conversion
 from ParameterData import ParameterData
 
 
-class Cli:
+class CLI:
     """
     Main class of the program, essentially wraps everything together and
     provides really basic user interface.
@@ -64,6 +64,7 @@ class Cli:
         shift.colour_shift()
         return True
 
+
 def help_prompt():
     print("shift [-p] [-wt] [-bt] [-mk] [-fg] [-bg]\n\n" +
           "     -p          determines the range of colours considered as background\n" +
@@ -73,6 +74,7 @@ def help_prompt():
           "     -fg         determines which colour will replace foreground colours\n" +
           "     -bg         determines which colour will replace background colours\n" +
           "     exit        exit the program\n")
+
 
 def parameter_scan(command):
     """
@@ -132,5 +134,6 @@ def parameter_scan(command):
 
     return params
 
+
 if __name__ == '__main__':
-    cli = Cli()
+    cli = CLI()

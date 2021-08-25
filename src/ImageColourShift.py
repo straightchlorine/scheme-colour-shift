@@ -1,57 +1,68 @@
 from ColourConversion import Conversion
-from ParameterValidation import Validation
+from ParameterData import ParameterData
 
 
-def cli():
+class Cli:
     """
-    returns void
-
-    Main function of the application, provides a simple user interface.
+    Main class of the program, essentially wraps everything together and
+    provides really basic user interface.
     """
-    u_input = user_input()
+    u_input = None
 
-    # main loop
-    while True:
+    def __init__(self):
+        self.cli()
 
-        if u_input == 'exit' or u_input == 'quit':
-            print("#>>Program terminated.")
-            break
+    def cli(self):
+        """
+        returns void
 
-        elif u_input == 'help':
-            help_prompt()
+        Main function of the application, provides a simple user interface.
+        """
+        self.user_input()
 
-        elif u_input.find('shift') != -1:
-            parameters = parameter_scan(u_input)
+        # main loop
+        while True:
 
-            valid = Validation(parameters)
-            if not valid.validate():
+            if self.u_input == 'exit' or self.u_input == 'quit':
+                print("#>> program terminated.")
+                break
+
+            elif self.u_input == 'help':
+                help_prompt()
+
+            elif self.u_input.find('shift') != -1:
+                if not self.shift_command():
+                    continue
+
+            elif self.u_input == '':
+                self.user_input()
                 continue
 
-            shift = Conversion(
-                int(parameters[0][1]),  # precision
-                int(parameters[1][1]),  # white threshold
-                int(parameters[2][1]),  # black threshold
-                parameters[3][1],  # mark colour
-                parameters[4][1],  # foreground
-                parameters[5][1],  # background
-                parameters[6][1]   # directory
-            )
+            else:
+                print('!>> invalid command')
 
-            shift.colour_shift()
+            self.user_input()
 
-        else:
-            print('!>> Invalid command')
+    def user_input(self):
+        """
+        Convenience method.
+        """
+        self.u_input = input(">> ")
+        return self.u_input
 
-        u_input = user_input()
+    def shift_command(self):
+        """
+        returns false if the validation was not a success
+        """
+        parameters = ParameterData(parameter_scan(self.u_input))
 
+        if not parameters.validate():
+            self.u_input = ''
+            return False
 
-def user_input():
-    """
-    Convenience method.
-    """
-    command = input(">> ")
-    return command
-
+        shift = Conversion(parameters)
+        shift.colour_shift()
+        return True
 
 def help_prompt():
     print("shift [-p] [-wt] [-bt] [-mk] [-fg] [-bg]\n\n" +
@@ -63,7 +74,6 @@ def help_prompt():
           "     -bg         determines which colour will replace background colours\n" +
           "     exit        exit the program\n")
 
-
 def parameter_scan(command):
     """
     returns a list of parameters, extracted from the command
@@ -71,7 +81,6 @@ def parameter_scan(command):
     The list has a predetermined order, for the purpose of receiving
     arguments in various configurations.
     """
-
     # removing the prefix
     parameters = command.split(' ')
     parameters.pop(0)
@@ -93,6 +102,7 @@ def parameter_scan(command):
     val = []
     for index, parameter in enumerate(parameters):
 
+        # extracting the values
         if parameter == '-p':
             p_val = parameters[index + 1]
         if parameter == '-wt':
@@ -122,5 +132,5 @@ def parameter_scan(command):
 
     return params
 
-
-cli()
+if __name__ == '__main__':
+    cli = Cli()
